@@ -16,7 +16,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer
 class KafkaProducerConfig {
 
     @Bean
-    fun producerFactory(): ProducerFactory<String, SlackReport> {
+    fun slackReportProducer(): ProducerFactory<String, SlackReport> {
         val config = mapOf(
             ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092",
             ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
@@ -26,7 +26,22 @@ class KafkaProducerConfig {
     }
 
     @Bean
-    fun kafkaTemplate(): KafkaTemplate<String, SlackReport> {
-        return KafkaTemplate(producerFactory())
+    fun slackReportKafkaTemplate(): KafkaTemplate<String, SlackReport> {
+        return KafkaTemplate(slackReportProducer())
+    }
+
+    @Bean
+    fun failSlackReportProducer(): ProducerFactory<String, SlackReport> {
+        val config = mapOf(
+            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092",
+            ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to JsonSerializer::class.java
+        )
+        return DefaultKafkaProducerFactory(config)
+    }
+
+    @Bean
+    fun failSlackReportKafkaTemplate(): KafkaTemplate<String, SlackReport> {
+        return KafkaTemplate(failSlackReportProducer())
     }
 }
